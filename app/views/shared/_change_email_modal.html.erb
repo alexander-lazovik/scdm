@@ -1,0 +1,49 @@
+<!-- Modal -->
+<div class="modal fade"
+  id="ChangeEmail" tabindex="-1" role="dialog" aria-labelledby="ChangeEmailTitle" aria-hidden="true">
+  <!-- <div class="modal-dialog modal-dialog-centered" role="document"> -->
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="ChangeEmailTitle">Change Your Email Address</h4>
+      </div>
+
+      <%= form_for( @portal_user, url: update_email_portal_user_path(), remote: true, authenticity_token: true, 
+        data: { model: 'portal_user', js_modal_form: "change_email" }, html: { id: "change_email_portal_user", role: :form } ) do |f| %>
+        <input type="text" name="email_address" value="<%= @portal_user.email_address.strip %>" autocomplete="username" style="display:none;">
+        <div class="modal-body">
+
+          <div class="form-group">
+            <%= f.label :new_email_address, "New Email Address", class: "control-label" %>
+            <%= f.email_field :new_email_address, class: "form-control first_input", required: true, autocomplete: "username" %>
+            <span class="help-block invalid-feedback"></span>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :new_email_address_confirmation, "Confirm Email Address", class: "control-label" %>
+            <%= f.email_field :new_email_address_confirmation, class: "form-control", required: true, autocomplete: "username" %>
+            <span class="help-block invalid-feedback"></span>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :current_password, "Current Password", class: "control-label" %>
+            <%= f.password_field :current_password, class: "form-control", required: true, autocomplete: "current-password", id: "update_email_current_password" %>
+            <span class="help-block invalid-feedback"></span>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" data-disable="true">Close</button>
+          <%= f.submit "Save changes", class: "btn btn-primary", data: { disable_with: 'Submitting...', js_modal_submit: "Save changes" } %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+<!-- END Modal test -->
+

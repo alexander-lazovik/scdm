@@ -1,0 +1,144 @@
+.rdl_page {
+  max-width: 950px;
+}
+
+.rdl_table {
+  width: 100%;
+  table-layout: auto;
+  font-size: small;
+  border: 1px solid #ddd;
+
+  th {
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+
+  td {
+    text-align: center;
+    border: 1px solid #ddd;
+    padding-top: 2px;
+  }
+
+  .location_header,
+  .location_data {
+    width: 40%;
+    text-align: left;
+    padding-left: 3px;
+  }
+
+  .location_name {
+    font-weight: bold;
+  }
+
+  .location_address {
+    font-size: smaller;
+  }
+
+  .order_id {
+    width: 10%;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .product {
+    width: 10%;
+    text-align: center;
+  }
+
+  .product::first-line {
+    font-weight: bold;
+  }
+
+  .draws_and_returns {
+    width: 10%;
+    text-align: center;
+  }
+
+  .returns_date {
+    width: 10%;
+    text-align: center;
+  }
+
+  .block_single_day {
+    padding: 0px 0px;
+    width: 100%;
+  }
+
+  .return_inputs,
+  .draw_inputs {
+    padding: 0px 0px;
+    height: 18px;
+    text-align: center;
+    width: 50px;
+    display: inline-block;
+  }
+
+  .zero_draw_reason_code {
+    visibility: hidden;
+    text-align: left;
+    font-size: smaller;
+    width: 100%;
+  }
+
+  .error_message{
+    visibility: hidden;
+    text-align: center;
+    color: red;
+    font-size: smaller;
+    width: 100%;
+  }
+
+  .late_return{
+    text-align: center;
+    color: #999;
+    font-size: smaller;
+    width: 100%;
+  }
+
+  .base_error_message {
+    font-weight: bold;
+    text-align: center;
+    border: 2px solid red;
+    color: red;
+    font-size: smaller;
+  }
+
+  input[type=number] {
+    -moz-appearance:textfield;
+  }
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+  }
+}
+
+.rdl_totals {
+  font-size: small;
+  border: 1px solid #ddd;
+
+  th {
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+
+  td {
+    width: 30px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+
+  td:first-child{
+    font-weight: bold;
+  }
+
+  tfoot {
+    border-top-style: double;
+    font-weight: bold;
+  }
+
+  .unequal{
+    color: red;
+  }
+}

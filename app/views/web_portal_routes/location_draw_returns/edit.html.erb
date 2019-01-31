@@ -1,0 +1,248 @@
+<div class="content">
+  <%= render "shared/flash_messages" %>
+  <h2 id="section_draw_returns_header" class="content_header">
+    <%= "Draw Management for the Week of #{(@web_portal_route.week_end_date - 6).strftime('%m/%d/%Y')} to #{(@web_portal_route.week_end_date).strftime('%m/%d/%Y')}" %></h2>
+  <%= render "web_portal_routes/web_portal_route_subtitle" %>
+
+  <a href="#filters" class="btn btn-block btn-primary" data-toggle="collapse">Filter Options</a>
+  <div id="filters" class="collapse section_filters">
+    <div id="daysOfWeek" class="form-horizontal">
+      <label class="filter_label">Days:</label>
+      <label class="checkbox-inline select_all"> <input type="checkbox" checked name="chk_all" class="chk_all">Select All</label>
+      <% Date::DAYS_INTO_WEEK.keys.each do |day_of_week| %>
+        <label class="checkbox-inline">
+          <input type="checkbox" checked name="<%= day_of_week.to_s %>" class="days_of_week"> <%= day_of_week.to_s.humanize %> </label>
+      <% end %>
+    </div>
+
+    <div id="productFiltors" class="form-horizontal">
+      <label class="filter_label">Products:</label>
+      <label class="checkbox-inline select_all"> <input type="checkbox" checked name="chk_all_products" class="chk_all_products">Select All</label>
+      <% @web_portal_route.draws_and_returns.distinct_product.pluck(:prodid, :prodrd).each do |prodid, prodrd| %>
+        <label class="checkbox-inline"> <input type="checkbox" checked name="product_search" value="<%= prodid.strip %>"
+          id="productsSearchInput_<%= prodid.strip %>" class="product_selectors"><%= "#{prodid.strip} - #{prodrd.strip}" %></label>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row" >
+    <div class="section_title col-xs-6">
+      <h4 id="section_draw_returns_details" class="title">Returns and Draw Details</h4>
+    </div>
+    <div class="section_actions col-xs-6">
+      <label class="checkbox-inline"> <input type="checkbox" id="returnsInput" checked onChange="enableReturns()">Return Entry</label>
+      <label class="checkbox-inline"> <input type="checkbox" id="drawsInput" unchecked onChange="enableDraws()">Draw Entry</label>
+      <div class="section_button"> <a class="btn-link" href="#section_draw_returns_totals" data-turbolinks="false">Go to Totals</a></div>
+    </div>
+  </div>
+
+  <%= form_tag(draw_and_return_path(id: @web_portal_route.to_param), method: :patch, remote: true) do %>
+    <div id="drawtable" class="table-responsive">
+      <table id="returnsTable" class="table table-hover table-condensed table-striped weekly_table">
+        <thead>
+          <tr>
+            <th class="location_header"><br><br>Location</th>
+            <th class="order_id">ID</th>
+            <th class="product">Product/Type</th>
+            <th class="draws_and_returns monday">Monday<br><%= (@web_portal_route.week_end_date - 6).strftime('%m/%d') %><br>Draw Ret</th>
+            <th class="draws_and_returns tuesday">Tuesday<br><%= (@web_portal_route.week_end_date - 5).strftime('%m/%d') %><br>Draw Ret</th>
+            <th class="draws_and_returns wednesday">Wednesday<br><%= (@web_portal_route.week_end_date - 4).strftime('%m/%d') %><br>Draw Ret</th>
+            <th class="draws_and_returns thursday">Thursday<br><%= (@web_portal_route.week_end_date - 3).strftime('%m/%d') %><br>Draw Ret</th>
+            <th class="draws_and_returns friday">Friday<br><%= (@web_portal_route.week_end_date - 2).strftime('%m/%d') %><br>Draw Ret</th>
+            <th class="draws_and_returns saturday">Saturday<br><%= (@web_portal_route.week_end_date - 1).strftime('%m/%d') %><br>Draw Ret</th>
+            <th class="draws_and_returns sunday">Sunday<br><%= (@web_portal_route.week_end_date).strftime('%m/%d/%Y') %><br>Draw Ret</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @locations.ordered_by_sequence.each do |location| %>
+            <% location.draws_and_returns.join_product.ordered_by_prod_seq.each do |draw_by_product| %>
+              <%= fields_for "location_draw_returns[]", draw_by_product do |fields| %>
+                <% lsprid = draw_by_product.product_id.strip %>
+                <% lstpid = draw_by_product.product_order_type_id.strip %>
+
+                <tr class="<%= lsprid %> <%=lstpid %> product_selector_all">
+                  <%= fields.hidden_field(:modified, class: "modified", value: "N") %>
+                  <input type="hidden" data-row-id="<%= draw_by_product.to_param %>">
+                  <input type="hidden" data-max_draw="<%= draw_by_product.product_order_draw_threshold_max %>">
+
+                  <td class="location_data">
+                    <div class="location_name">
+                      <%= "#{location.id.to_s.strip} - #{location.location_name.strip}"%>
+                    </div>
+                    <div class="location_address">
+                      <%= "#{location.address_line.strip}" %>
+                      <br><%= " #{format_to_phone_number(location.location_phone)}" %>
+                    </div>
+                  </td>
+                  <td class="order_id"><%= format_id_to_s(draw_by_product.product_order_id) %></td>
+                  <td class="product"><%= "#{lsprid} - #{draw_by_product.product_short_name.strip}" %><br><%= lstpid %></td>
+
+                  <td class="monday draws_and_returns">
+                    <%= render partial: 'single_day', locals: {draw_to_edit: draw_by_product, day_of_week: 'monday', fields: fields} %>
+                  </td>
+                  <td class="tuesday draws_and_returns">
+                    <%= render partial: 'single_day', locals: {draw_to_edit: draw_by_product, day_of_week: 'tuesday', fields: fields} %>
+                  </td>
+                  <td class="wednesday draws_and_returns">
+                    <%= render partial: 'single_day', locals: {draw_to_edit: draw_by_product, day_of_week: 'wednesday', fields: fields} %>
+                  </td>
+                  <td class="thursday draws_and_returns">
+                    <%= render partial: 'single_day', locals: {draw_to_edit: draw_by_product, day_of_week: 'thursday', fields: fields} %>
+                  </td>
+                  <td class="friday draws_and_returns">
+                    <%= render partial: 'single_day', locals: {draw_to_edit: draw_by_product, day_of_week: 'friday', fields: fields} %>
+                  </td>
+                  <td class="saturday draws_and_returns">
+                    <%= render partial: 'single_day', locals: {draw_to_edit: draw_by_product, day_of_week: 'saturday', fields: fields} %>
+                  </td>
+                  <td class="sunday draws_and_returns">
+                    <%= render partial: 'single_day', locals: {draw_to_edit: draw_by_product, day_of_week: 'sunday', fields: fields} %>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-1"></div>
+      <div class="col-xs-2" style="text-align:center;">
+        <%= hidden_field_tag "range", params[:range] %>
+        <%= button_tag "Submit", class: "btn btn-primary btn-block submit_button",
+          id: "save_draw_returns", name: "submit",
+          data: { disable_with: "Submitting...", confirm: "Are you sure?", js_modal_confirm: "#Affidavit",
+            turbolinks: "false", toggle: "popover", title: "Submit Returns and Draw",
+            content: "Save returns and draw to Champion" } %>
+      </div>
+      <div class="col-xs-2">
+        <%= link_to "Clear", edit_draw_and_return_path(id: params[:id], range: params[:range]), :class=>"btn btn-primary btn-block", :name=>"clear", data:{toggle:"popover", title:"Clear Form", content:"Clear current entries without saving"}  %>
+      </div>
+      <div class="col-xs-2" style="text-align:center;">
+        <%= link_to "Back", web_portal_route_path(id: @web_portal_route.to_param), :class=>"btn btn-primary btn-block", :name=>"back", data:{toggle:"popover", title:"Return to Date Selection", content:"Select new week to enter returns and draw"} %>
+      </div>
+      <div class="col-xs-2" style="text-align:center;">
+        <%= link_to "Print", print_draw_and_return_path(@portal_user, id: @web_portal_route.to_param, format: "pdf"), :class=>"btn btn-primary btn-block", :name=>"print", data:{toggle:"popover", title:"Print Weekly Draws and Returns route list", content:"Print all or part of a week Draws and returns"} %>
+      </div>
+      <div class="col-xs-2" style="text-align:center;">
+        <%= link_to "Export", edit_draw_and_return_path(id: params[:id], range: params[:range], format: "xlsx"),
+          class: "btn btn-primary btn-block", name: "export",
+          data: {toggle: "popover", title: "Export Weekly Draws and Returns route list",
+          content: "Export all or part of a week Draws and returns"} %>
+      </div>
+    </div>
+  <% end %> <!-- End of form -->
+    <hr>
+
+    <div class="row">
+      <div class="section_title col-xs-6">
+        <h4 id="section_draw_returns_totals" class="title">Returns and Draw Totals</h4>
+      </div>
+      <div class="section_actions col-xs-6 text-right">
+        <div class="section_button"> <a class="btn-link" href="#section_draw_returns_header" data-turbolinks="false">Back to Details</a></div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table id="draw_returns_totals" class="table table-hover table-condensed table-striped weekly_totals" >
+        <thead>
+          <tr>
+            <th rowspan="2">Prod</th>
+            <th colspan="3">Monday</th>
+            <th colspan="3">Tuesday</th>
+            <th colspan="3">Wednesday</th>
+            <th colspan="3">Thursday</th>
+            <th colspan="3">Friday</th>
+            <th colspan="3">Saturday</th>
+            <th colspan="3">Sunday</th>
+          </tr>
+          <tr>
+            <th>Orig Draw</th>
+            <th>Draw</th>
+            <th>Ret</th>
+            <th>Orig Draw</th>
+            <th>Draw</th>
+            <th>Ret</th>
+            <th>Orig Draw</th>
+            <th>Draw</th>
+            <th>Ret</th>
+            <th>Orig Draw</th>
+            <th>Draw</th>
+            <th>Ret</th>
+            <th>Orig Draw</th>
+            <th>Draw</th>
+            <th>Ret</th>
+            <th>Orig Draw</th>
+            <th>Draw</th>
+            <th>Ret</th>
+            <th>Orig Draw</th>
+            <th>Draw</th>
+            <th>Ret</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%  @web_portal_route.draws_and_returns.product_totals.each do |route_product| %>
+            <tr class="total_data_row">
+              <td class="total_data total_<%=route_product.prodid%> right_border"><%= route_product.prodid.strip %></td>
+              <td class="total_data monday original_value"><%= route_product.monday_net_draw %></td>
+              <td class="total_data monday draw"><%= route_product.monday_net_draw %></td>
+              <td class="total_data monday returns right_border"><%= route_product.monday_returns %></td>
+              <td class="total_data tuesday original_value"><%= route_product.tuesday_net_draw %></td>
+              <td class="total_data tuesday draw"><%= route_product.tuesday_net_draw %></td>
+              <td class="total_data tuesday returns right_border"><%= route_product.tuesday_returns %></td>
+              <td class="total_data wednesday original_value"><%= route_product.wednesday_net_draw %></td>
+              <td class="total_data wednesday draw"><%= route_product.wednesday_net_draw %></td>
+              <td class="total_data wednesday returns right_border"><%= route_product.wednesday_returns %></td>
+              <td class="total_data thursday original_value"><%= route_product.thursday_net_draw %></td>
+              <td class="total_data thursday draw"><%= route_product.thursday_net_draw %></td>
+              <td class="total_data thursday returns right_border"><%= route_product.thursday_returns %></td>
+              <td class="total_data friday original_value"><%= route_product.friday_net_draw %></td>
+              <td class="total_data friday draw"><%= route_product.friday_net_draw %></td>
+              <td class="total_data friday returns right_border"><%= route_product.friday_returns %></td>
+              <td class="total_data saturday original_value"><%= route_product.saturday_net_draw %></td>
+              <td class="total_data saturday draw"><%= route_product.saturday_net_draw %></td>
+              <td class="total_data saturday returns right_border"><%= route_product.saturday_returns %></td>
+              <td class="total_data sunday original_value"><%= route_product.sunday_net_draw %></td>
+              <td class="total_data sunday draw"><%= route_product.sunday_net_draw %></td>
+              <td class="total_data sunday returns"><%= route_product.sunday_returns %></td>
+            </tr>
+          <%end%>
+        </tbody>
+        <tfoot>
+          <% @web_portal_route.draws_and_returns.sum_totals.each do |route_total| %>
+            <tr class="total_sum_row">
+              <td class="total_sum right_border">Total</td>
+              <td class="total_sum monday original_value"><%= route_total.monday_net_draw %></td>
+              <td class="total_sum monday draw"><%= route_total.monday_net_draw %></td>
+              <td class="total_sum monday returns right_border"><%= route_total.monday_returns %></td>
+              <td class="total_sum tuesday original_value"><%= route_total.tuesday_net_draw %></td>
+              <td class="total_sum tuesday draw"><%= route_total.tuesday_net_draw %></td>
+              <td class="total_sum tuesday returns right_border"><%= route_total.tuesday_returns %></td>
+              <td class="total_sum wednesday original_value"><%= route_total.wednesday_net_draw %></td>
+              <td class="total_sum wednesday draw"><%= route_total.wednesday_net_draw %></td>
+              <td class="total_sum wednesday returns right_border"><%= route_total.wednesday_returns %></td>
+              <td class="total_sum thursday original_value"><%= route_total.thursday_net_draw %></td>
+              <td class="total_sum thursday draw"><%= route_total.thursday_net_draw %></td>
+              <td class="total_sum thursday returns right_border"><%= route_total.thursday_returns %></td>
+              <td class="total_sum friday original_value"><%= route_total.friday_net_draw %></td>
+              <td class="total_sum friday draw"><%= route_total.friday_net_draw %></td>
+              <td class="total_sum friday returns right_border"><%= route_total.friday_returns %></td>
+              <td class="total_sum saturday original_value"><%= route_total.saturday_net_draw %></td>
+              <td class="total_sum saturday draw"><%= route_total.saturday_net_draw %></td>
+              <td class="total_sum saturday returns right_border"><%= route_total.saturday_returns %></td>
+              <td class="total_sum sunday original_value"><%= route_total.sunday_net_draw %></td>
+              <td class="total_sum sunday draw"><%= route_total.sunday_net_draw %></td>
+              <td class="total_sum sunday returns"><%= route_total.sunday_returns %></td>
+            </tr>
+          <%end%>
+        </tfoot>
+      </table>
+    </div>
+</div>   <!--Container  -->
+
+<%= render "shared/affidavit_modal" %>
+<%= javascript_include_tag "location_draw_returns.js", "data-turbolinks-track" => true %>
+
+
+
+

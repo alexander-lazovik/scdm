@@ -1,0 +1,20 @@
+<table class="table table-hover table-striped table_dashboard">
+  <thead>
+    <tr>
+      <th class="column_id">Market ID</th>
+      <th class="column_id">District ID</th>
+      <th class="column_id">Route ID</th>
+      <th>Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @portal_user.messages.each do |message| %>
+      <tr>
+        <td class="column_id"><%= format_id_to_s(message.market_id) %></td>
+        <td class="column_id"><%= format_id_to_s(message.district_id) %></td>
+        <td class="column_id"><%= format_id_to_s(message.route_id) %></td>
+        <td><%= message.message_text %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

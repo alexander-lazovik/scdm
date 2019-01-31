@@ -1,0 +1,46 @@
+<div class="modal fade"
+  id="Affidavit" tabindex="-1" role="dialog" aria-labelledby="AffidavitTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="AffidavitTitle">Affidavit</h4>
+      </div>
+
+      <form id="form_affidavit" data-model="location_draw_return">
+        <div class="modal-body">
+
+          <div class="bs-callout bs-callout-primary">
+            <div>
+              I acknowledge that coupons not sold properly with the related edition of the newspaper
+              may not be distributed in any manner.
+              Such prohibition includes distribution to commercial, charitable or fundraising organizations.
+              I have taken all necessary precautions with regard to the disposal of unsold newspapers
+              so as to ensure the coupons are disposed of in such a manner as to render them unusable for redemption.
+              I further agree to allow Gannett Publishing Services to make periodic inspections
+              of disposal practices as they relate to these objectives.
+            </div>
+          </div>
+
+          <div class="checkbox" style="text-align:center;">
+            <label>
+              <input type="checkbox" id="affidavit_signed" value="true" required>
+              Check here to indicate that you have read and agree to the terms.
+            </label>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" data-disable="true">Close</button>
+          <button type="button" id="affidavit_save_button" class="btn btn-primary" disabled data-js-modal-submit="Save">Save</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,27 @@
+<div class="content">
+  <h2 class="content_header">Weekly Returns and Draw</h2>
+  <%= render 'web_portal_route_subtitle' %>
+  <br>
+
+  <div class="route_form">
+    <%= form_tag(edit_draw_and_return_path(id: @web_portal_route.to_param),
+      {method: :get, class: "form form-horizontal"}) do %>
+      <%= text_field_tag "range", format_date(current_week_end_date),
+        class: "datepicker route_date" %>
+      <%= button_tag "Manage Returns and Draw", class: "btn btn-primary", name: nil %>
+    <% end %>
+
+    <div class="list-group previous_weeks">
+      <% 1.upto(4) do |number| %>
+        <%= link_to format_date(previous_week(number)),
+          edit_draw_and_return_path(id: @web_portal_route.to_param, range: date_to_param(previous_week(number))),
+          class: "list-group-item list-group-item-action route_date" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="route_warning">
+    <h5>Please Note: Data entered after 3:00PM EST may not impact the current distribution date
+      <%= "#{get_next_edition_date}." %></h5>
+  </div>
+</div>

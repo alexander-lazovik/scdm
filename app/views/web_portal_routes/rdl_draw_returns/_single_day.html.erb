@@ -1,0 +1,31 @@
+<td class="monday draws_and_returns">
+  <div class="block_single_day">
+    <% if draw_to_edit.show_day? %>
+      <% draw_disabled = draw_to_edit.draw_edit_allowed? && !draw_to_edit.week_late_returns? ? "" : "frozen" %>
+      <%= fields.number_field(:day_net_draw, class: "draw_inputs form-control #{draw_disabled}", min: 0) %>
+      <div class="error_message"></div>
+      <% reason_visibility = draw_to_edit.zero_draw_reason_visible? ? "visible" : "hidden" %>
+      <%= fields.collection_select("day_zero_draw_reason_code", @zero_draw_reason_codes, :id, :description,
+        {include_blank: ""}, {class: "zero_draw_reason_code #{draw_disabled}", style: "visibility: #{reason_visibility};",
+        data: {original_value: "#{draw_to_edit.day_zero_draw_reason_code}"}}) %>
+    <% end %>
+  </div>
+</td>
+
+<td class="returns_date">
+  <%= format_date_to_s(draw_to_edit.returns_date) %>
+</td>
+
+<td class="monday draws_and_returns">
+  <div class="block_single_day">
+    <% if draw_to_edit.show_day? %>
+      <% returns_disabled = draw_to_edit.returns_edit_allowed? ? "" : "frozen" %>
+      <%= fields.number_field(:day_returns, class: "return_inputs form-control #{returns_disabled}", min: 0,
+        value: eval_to_space(draw_to_edit.day_returns)) %>
+      <% if draw_to_edit.returns_edit_allowed? && draw_to_edit.week_late_returns? %>
+          <div class="late_return">LATE RETURN</div>
+      <% end %>
+      <div class="error_message"></div>
+    <% end %>
+  </div>
+</td>

@@ -1,0 +1,23 @@
+<div class="center-role-form col-12 form " >
+
+  <%= form_for @login_user, url: forgot_passwords_path, html: {method: "post"} do |f| %>
+
+    <div class="sign-in">
+      Request Password
+    </div>
+    <row>
+      <div class="form-group">
+        <%= f.label :email_address%>
+        <%= f.text_field(:email_address, class: "form-control")  %>
+      </div>
+    </row>
+      <%=f.submit 'Request Password', class: "btn btn-primary btn-block btn-lg " %>
+    </row>
+    <P></P>
+    <row>
+      <div class="col-sm-3"></div>
+      <div class="col-sm-6 text-center"><%= link_to "Return to Login Page", login_path %></div>
+      <div class="col-sm-3"></div>
+    </row>
+  <% end %>
+</div>

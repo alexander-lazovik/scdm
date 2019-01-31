@@ -1,0 +1,45 @@
+html {
+  position: relative;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Container for login and forgot password pages.
+** It does not stretch the content */
+.main-content {
+  flex-grow: 1;
+}
+
+/* Container for pages without sidebar */
+.container {
+  width: auto;
+  max-width: 680px;
+  min-width: 100%;
+  background: white;
+  padding: 0 15px;
+}
+
+/* Main container for pages with a sidebar.
+** It stretches the elements inside */
+.main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+/* Content container for pages with a sidebar */
+.content {
+  flex: 10 10 auto;
+  padding: 0 15px;
+}
+

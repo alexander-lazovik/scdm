@@ -1,0 +1,22 @@
+// Place all the styles related to the WebPortalRoutes controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.route_form {
+  padding-left: 30px;
+}
+
+.route_warning {
+  color: red;
+}
+
+.route_date {
+  text-align: center;
+  width: 120px;
+}
+
+.list-group-item.route_date {
+  text-align: center;
+  color: #337ab7;
+}
+

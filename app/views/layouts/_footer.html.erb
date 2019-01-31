@@ -1,0 +1,18 @@
+<% cache do %>
+  <footer class="footer">
+    <div class="container">
+      <div class="copy">
+        <%= Time.current.year %> &copy; USA TODAY, a
+        <%= link_to 'Gannett Company', "http://www.gannett.com" %>
+        All rights reserved
+        <%= link_to 'Privacy Policy', "http://static.usatoday.com/privacy" %>
+        | By using this service, you accept our
+        <%= link_to 'Terms of Service', miscpage_path(id: 'terms_of_service'), page: 'terms_of_service' %>
+      </div>
+    </div>
+  </footer>
+<% end %>
+
+
+
+

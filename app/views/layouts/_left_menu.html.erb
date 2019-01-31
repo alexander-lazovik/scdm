@@ -1,0 +1,28 @@
+<!-- Left Menu partial -->
+<div class="sidebar">
+  <nav role="navigation">
+    <ul class="nav nav-stacked">
+      <% if current_user.has_routes_or_blue_chip('RTE') %>
+        <li class="nav-item" id="sidebar_routes"><%= link_to 'Routes', portal_user_path() %> </li>
+      <%end%>
+      <% if current_user.has_routes_or_blue_chip('RTE') %>
+        <li class="nav-item" id="sidebar_hotel"><%= link_to 'Hotel', portal_user_path() %></li>
+      <%end%>
+
+      <li class="nav-divider"></li>
+      <li class="nav-item" id="sidebar_profile"><%= link_to 'My Profile', edit_portal_user_path() %></li>
+      <li class="nav-item" id="sidebar_contact_us"><%= link_to 'Contact Us', miscpage_path(id: 'contactus'), page: 'contactus' %></li>
+      <li class="nav-item" id="sidebar_faq"><%= link_to 'FAQ', miscpage_path(id: 'faq'), page: 'faq'%></li>
+
+      <li class="nav-divider"></li>
+      <li class="nav-text">Related Links:</li>
+      <li class="nav-item"><%= link_to "USA TODAY.com", "http://usatoday.com" %></li>
+      <li class="nav-item"><%= link_to "USA TODAY Home Delivery", "https://service.usatoday.com/welcome.jsp" %></li>
+      <li class="nav-item"><%= link_to "USA TODAY Back Issues", "https://service.usatoday.com/shop" %></li>
+
+      <li class="nav-divider"></li>
+      <li class="nav-text"> Welcome: <%= current_user.wpunam.strip %></li>
+      <li class="nav-item" id="sidebar_logout"><%= link_to 'Sign Out', logout_path, method: :delete %></li>
+    </ul>
+  </nav>
+</div>

@@ -1,0 +1,154 @@
+<div class="content rdl_page">
+  <%= render "shared/flash_messages" %>
+  <h2 id="section_draw_returns_header" class="content_header">
+    <%= "Draw Management for RDL Date: #{@web_portal_route.distribution_date.strftime('%B %d, %Y')}" %></h2>
+  <%= render "web_portal_routes/web_portal_route_subtitle" %>
+
+  <a href="#filters" class="btn btn-block btn-primary" data-toggle="collapse">Filter Options</a>
+  <div id="filters" class="collapse section_filters">
+    <div id="productFiltors" class="form-horizontal">
+      <label class="filter_label">Products:</label>
+      <label class="checkbox-inline select_all"> <input type="checkbox" checked name="chk_all_products" class="chk_all_products">Select All</label>
+      <% @web_portal_route.rdl_draw_returns.distinct_product.pluck(:prodid, :prodrd).each do |prodid, prodrd| %>
+        <label class="checkbox-inline"> <input type="checkbox" checked name="product_search" value="<%= prodid.strip %>"
+          id="productsSearchInput_<%= prodid.strip %>" class="product_selectors"><%= "#{prodid.strip} - #{prodrd.strip}" %></label>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row" >
+    <div class="section_title col-xs-6">
+      <h4 id="section_draw_returns_details" class="title">Returns and Draw Details</h4>
+    </div>
+    <div class="section_actions col-xs-6">
+      <label class="checkbox-inline"> <input type="checkbox" id="returnsInput" checked onChange="enableReturns()">Return Entry</label>
+      <label class="checkbox-inline"> <input type="checkbox" id="drawsInput" unchecked onChange="enableDraws()">Draw Entry</label>
+      <div class="section_button"> <a class="btn-link" href="#section_draw_returns_totals" data-turbolinks="false">Go to Totals</a></div>
+    </div>
+  </div>
+
+  <%= form_tag(rdl_draw_and_return_path(id: @web_portal_route.to_param), method: :patch, remote: true) do %>
+    <div id="drawtable" class="table-responsive">
+      <table id="returnsTable" class="table table-hover table-condensed table-striped rdl_table">
+        <thead>
+          <tr>
+            <th class="location_header"><br>Location</th>
+            <th class="order_id">ID</th>
+            <th class="product">Product/Type</th>
+            <th class="draws_and_returns">Draw</th>
+            <th class="returns_date">Returns Date</th>
+            <th class="draws_and_returns">Returns</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @locations.ordered_by_sequence.each do |location| %>
+            <% location.rdl_draw_returns.join_product.ordered_by_prod_seq.each do |draw_by_product| %>
+              <%= fields_for "rdl_draw_returns[]", draw_by_product do |fields| %>
+                <% lsprid = draw_by_product.product_id.strip %>
+                <% lstpid = draw_by_product.product_order_type_id.strip %>
+
+                <tr class="<%= lsprid %> <%=lstpid %> product_selector_all" data-js-single-day>
+                  <%= fields.hidden_field(:modified, class: "modified", value: "N") %>
+                  <%= fields.hidden_field(:day_update_type, class: "update_type", value: "N") %>
+                  <input type="hidden" data-row-id="<%= draw_by_product.to_param %>">
+                  <input type="hidden" data-draw_day_returns="<%= draw_by_product.draw_day_returns %>">
+                  <input type="hidden" data-returns_day_net_draw="<%= draw_by_product.returns_day_net_draw %>">
+                  <input type="hidden" data-max_draw="<%= draw_by_product.product_order_draw_threshold_max %>">
+
+                  <td class="location_data">
+                    <div class="location_name">
+                      <%= "#{location.location_id.to_s.strip} - #{location.location_name.strip}"%>
+                    </div>
+                    <div class="location_address">
+                      <%= location.address_line.strip %><br>
+                      <%= format_to_phone_number(location.location_phone) %>
+                    </div>
+                  </td>
+                  <td class="order_id"><%= format_id_to_s(draw_by_product.product_order_id) %></td>
+                  <td class="product"><%= "#{lsprid} - #{draw_by_product.product_short_name.strip}" %><br><%= lstpid %></td>
+                  <%= render partial: 'single_day', locals: {draw_to_edit: draw_by_product, fields: fields} %>
+                </tr>
+              <% end %>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-2"></div>
+      <div class="col-xs-2" style="text-align:center;">
+        <%= hidden_field_tag "range", params[:range] %>
+        <%= button_tag "Submit", class: "btn btn-primary btn-block submit_button",
+          id: "save_draw_returns", name: "submit",
+          data: { disable_with: "Submitting...", confirm: "Are you sure?", js_modal_confirm: "#Affidavit",
+            turbolinks: "false", toggle: "popover", title: "Submit Returns and Draw",
+            content: "Save returns and draw to Champion" } %>
+      </div>
+      <div class="col-xs-2">
+        <%= link_to "Clear", url_for(params), class: "btn btn-primary btn-block", name: "clear",
+          data: {toggle: "popover", title: "Clear Form", content: "Clear current entries without saving"}  %>
+      </div>
+      <div class="col-xs-2 " style="text-align:center;">
+        <%= link_to "Back", rdl_web_portal_route_path(id: @web_portal_route.to_param),
+          class: "btn btn-primary btn-block", name: "back",
+          data: {toggle: "popover", title: "Return to Date Selection", content: "Select new date to enter returns and draw"} %>
+      </div>
+      <div class="col-xs-2 " style="text-align:center;">
+        <%= link_to "Print", print_draw_and_return_path(@portal_user, id: @web_portal_route.to_param, format: "pdf"),
+          class: "disabled btn btn-primary btn-block", name: "print",
+          data: {toggle: "popover", title: "Print Weekly Draws and Returns route list",
+          content: "Print all or part of a week Draws and returns"} %>
+      </div>
+    </div>
+  <% end %> <!-- End of form -->
+  <hr>
+
+  <div class="row">
+    <div class="section_title col-xs-6">
+      <h4 id="section_draw_returns_totals" class="title">Returns and Draw Totals</h4>
+    </div>
+    <div class="section_actions col-xs-6 text-right">
+      <div class="section_button"> <a class="btn-link" href="#section_draw_returns_header" data-turbolinks="false">Back to Details</a></div>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table id="draw_returns_totals" class="table table-hover table-condensed table-striped rdl_totals" >
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Original Draw</th>
+          <th>Draw</th>
+          <th>Returns</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%  @web_portal_route.rdl_draw_returns.product_totals.each do |route_product| %>
+          <tr class="total_data_row">
+            <td class="total_data total_<%= route_product.prodid.strip %>"><%= route_product.prodid.strip %></td>
+            <td class="total_data monday original_value"><%= route_product.day_net_draw %></td>
+            <td class="total_data monday draw"><%= route_product.day_net_draw %></td>
+            <td class="total_data monday returns"><%= route_product.day_returns %></td>
+          </tr>
+        <%end%>
+      </tbody>
+      <tfoot>
+        <% @web_portal_route.rdl_draw_returns.sum_totals.each do |route_total| %>
+          <tr class="total_sum_row">
+            <td class="total_sum">Total</td>
+            <td class="total_sum monday original_value"><%= route_total.day_net_draw %></td>
+            <td class="total_sum monday draw"><%= route_total.day_net_draw %></td>
+            <td class="total_sum monday returns"><%= route_total.day_returns %></td>
+          </tr>
+        <%end%>
+      </tfoot>
+    </table>
+  </div>
+</div>   <!--Container  -->
+
+<%= render "shared/affidavit_modal" %>
+<%= javascript_include_tag "location_draw_returns.js", "data-turbolinks-track" => true %>
+
+
+
+

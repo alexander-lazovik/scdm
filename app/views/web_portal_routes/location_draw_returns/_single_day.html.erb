@@ -1,0 +1,20 @@
+<div class="block_single_day" data-js-single-day>
+<% if show_day?(day_of_week, draw_to_edit) %>
+  <% draw_disabled = draw_edit_allowed?(day_of_week, draw_to_edit) ? "" : "frozen" %>
+  <% returns_disabled = return_edit_allowed?(day_of_week, draw_to_edit) ? "" : "frozen" %>
+  <%= fields.hidden_field(day_of_week + "_update_type", class: "update_type", value: "N") %>
+  <%= fields.number_field(day_of_week + "_net_draw", class: "draw_inputs form-control #{draw_disabled}", min: 0) %>
+  <%= fields.number_field(day_of_week + "_returns", class: "return_inputs form-control #{returns_disabled}", min: 0,
+    value: eval_to_space(day_returns(day_of_week, draw_to_edit))) %>
+  <% if return_edit_allowed?(day_of_week, draw_to_edit) && draw_to_edit.week_late_returns? %>
+      <div class="late_return">LATE RETURN</div>
+  <%end%>
+  <div class="error_message"></div>
+  <% reason_visibility = zero_draw_reason_visible?(day_of_week, draw_to_edit) ? "visible" : "hidden" %>
+  <%= fields.collection_select(day_of_week + "_zero_draw_reason_code", @zero_draw_reason_codes, :id, :description,
+    {include_blank: ""}, {class: "zero_draw_reason_code #{draw_disabled}", style: "visibility: #{reason_visibility};",
+    data: {original_value: "#{zero_draw_reason_code(day_of_week, draw_to_edit)}"}}) %>
+<%else%>
+  <%= "#{eval_to_space(net_draw(day_of_week, draw_to_edit))}" %><%= "#{eval_to_space(day_returns(day_of_week, draw_to_edit))}" %>
+<%end%>
+</div>

@@ -1,0 +1,34 @@
+<table class="table table-hover table-striped table_dashboard">
+  <thead>
+    <tr>
+      <th class="column_id">Market ID</th>
+      <th class="column_id">District ID</th>
+      <th class="column_id">Route ID</th>
+      <th class="route_desc">Route Description</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @portal_user.web_portal_routes.each do |web_portal_route| %>
+      <tr>
+        <td class="column_id"><%= format_id_to_s(web_portal_route.market_id) %></td>
+        <td class="column_id"><%= format_id_to_s(web_portal_route.district_id) %></td>
+        <td class="column_id"><%= format_id_to_s(web_portal_route.route_id) %></td>
+        <td class="route_desc"><%= web_portal_route.route_description %></td>
+        <td>
+          <row>
+            <%= link_to "Weekly", web_portal_route_path(id: web_portal_route.to_param),
+              class: "btn btn-info btn-xs", data: {toggle: "popover", title: "Weekly Returns and Draw",
+              content: "Enter returns and draw for all or part of a week"}  %>
+
+            <%= link_to "RDL", rdl_web_portal_route_path(id: web_portal_route.to_param),
+              class: "btn btn-info btn-xs", data: {toggle: "popover", title: "Daily Route Delivery List",
+              content: "Enter returns and draw for a day"}  %>
+          </row>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+

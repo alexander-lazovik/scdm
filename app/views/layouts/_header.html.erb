@@ -1,0 +1,15 @@
+<% cache do %>
+  <header class="header">
+    <div class="container">
+      <% if local_assigns[:align_header] != :left %>
+        <div class="col-sm-1"> </div>
+      <% end %>
+      <div class="col-sm-8">
+        <%= image_tag "USATODAY_Header_SCS_UPPER_no_blue_underline", alt: "Champion Draw Management"  %>
+      </div>
+      <div class="col-sm-3 text-bottom text-left">
+        <%= what_time_is_it %>
+      </div>
+    </div>
+  </header>
+<% end %>

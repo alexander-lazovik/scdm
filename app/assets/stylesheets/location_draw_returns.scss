@@ -1,0 +1,197 @@
+.table-condensed > thead > tr > th,
+.table-condensed > tbody > tr > th,
+.table-condensed > tfoot > tr > th,
+.table-condensed > thead > tr > td,
+.table-condensed > tbody > tr > td,
+.table-condensed > tfoot > tr > td {
+    padding: 1px;
+}
+
+.weekly_table {
+  width: 100%;
+  table-layout: auto;
+  font-size: small;
+  border: 1px solid #ddd;
+
+  th {
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+
+  td {
+    text-align: center;
+    border: 1px solid #ddd;
+    padding-top: 2px;
+  }
+
+  .location_header {
+    width: 19%;
+    text-align: left;
+    padding-left: 3px;
+  }
+
+  .location_data {
+    width: 19%;
+    text-align: left;
+    padding-left: 3px;
+  }
+
+  .location_name {
+    font-weight: bold;
+  }
+
+  .location_address {
+    font-size: smaller;
+  }
+
+  .order_id {
+    width: 3%;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .product {
+    width: 8%;
+    text-align: center;
+  }
+
+  .product::first-line {
+    font-weight: bold;
+  }
+
+  .draws_and_returns {
+    width: 10%;
+    text-align: center;
+  }
+
+  .block_single_day {
+    padding: 0px 0px;
+    width: 100%;
+  }
+
+  .return_inputs,
+  .draw_inputs {
+    padding: 0px 0px;
+    height: 18px;
+    text-align: center;
+    width: 45px;
+    display: inline-block;
+  }
+
+  .zero_draw_reason_code {
+    visibility: hidden;
+    text-align: left;
+    font-size: smaller;
+    width: 100%;
+  }
+
+  .error_message{
+    visibility: hidden;
+    text-align: center;
+    color: red;
+    font-size: smaller;
+    width: 100%;
+  }
+
+  .late_return{
+    text-align: center;
+    color: #999;
+    font-size: smaller;
+    width: 100%;
+  }
+
+  .base_error_message {
+    font-weight: bold;
+    text-align: center;
+    border: 2px solid red;
+    color: red;
+    font-size: smaller;
+  }
+
+  input[type=number] {
+    -moz-appearance:textfield;
+  }
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+  }
+}
+
+
+.weekly_totals {
+  font-size: small;
+  border: 1px solid #ddd;
+
+  th {
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+
+  td {
+    width: 30px;
+    text-align: center;
+  }
+
+  td:first-child{
+    font-weight: bold;
+  }
+
+  tfoot {
+    border-top-style: double;
+    font-weight: bold;
+  }
+
+  .right_border {
+    border-right: 1px solid #ddd;
+  }
+
+  .unequal{
+    color: red;
+  }
+}
+
+.section_actions {
+  display: -webkit-flex; /* Safari */
+  -webkit-justify-content: flex-end; /* Safari 6.1+ */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 40px;
+}
+
+.section_button {
+  margin-left: 15px;
+  display: inline-block;
+}
+
+.section_filters {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+
+  .filter_label {
+    padding-top: 7px;
+    margin: 0;
+    vertical-align: middle;
+    width: 80px;
+  }
+
+  .checkbox-inline {
+    width: 120px;
+  }
+
+  .select_all {
+    width: 90px;
+  }
+
+  .form-horizontal {
+    margin-top: 5px;
+  }
+}
+
+.section_title {
+  .title {
+    font-weight:  bold;
+  }
+}

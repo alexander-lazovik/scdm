@@ -1,0 +1,18 @@
+// Show modal with success message
+modal = $('#ChangeEmail')
+<% if result == :success %>
+
+  modal.modal_success("Your email has been changed.");
+  $('#staticEmailAddress').html("<%= @portal_user.new_email_address %>");
+
+// Show modal with validation errors
+<% elsif result == :error %>
+
+  modal.modal_error( <%= raw errors %> );
+
+// Show modal with the Lansa error message
+<% elsif result == :failure %>
+
+  modal.modal_failure("<%= lansa_error %>");
+
+<% end %>

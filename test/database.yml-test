@@ -1,0 +1,22 @@
+default: &default
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+
+
+development:
+  <<: *default
+  database: tmp/development.sqlite3
+
+
+test:
+  <<: *default
+  database: tmp/test.sqlite3
+
+
+champion:
+  adapter: ibm_db_odbc
+  datasource: UNIFD4
+  username: champweb
+  password:  <%= GciSimpleEncryption.decrypt_hex('5045712b7276336c5845744c70624b56675a4a4a33413d3d0a') %>
+  schema: SCQUADTA

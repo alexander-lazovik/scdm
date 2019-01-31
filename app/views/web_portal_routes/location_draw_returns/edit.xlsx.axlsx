@@ -1,0 +1,96 @@
+wb = xlsx_package.workbook
+
+# Create styles we can use for cells
+title = wb.styles.add_style(sz: 18, b: true, alignment: { horizontal: :left })
+subtitle = wb.styles.add_style(b: true, alignment: { horizontal: :left })
+header = wb.styles.add_style(b: true, alignment: { horizontal: :center }, border: Axlsx::STYLE_THIN_BORDER)
+footer = wb.styles.add_style(b: true, alignment: { horizontal: :center }, border: Axlsx::STYLE_THIN_BORDER)
+day_header = wb.styles.add_style(b: true, alignment: {horizontal: :center, vertical: :bottom}, border: Axlsx::STYLE_THIN_BORDER )
+location_style = wb.styles.add_style(alignment: {horizontal: :left, vertical: :top, wrap_text: true}, border: Axlsx::STYLE_THIN_BORDER )
+product_style = wb.styles.add_style(alignment: {horizontal: :center, vertical: :top, wrap_text: true}, border: Axlsx::STYLE_THIN_BORDER )
+data_style = wb.styles.add_style(alignment: {horizontal: :center, vertical: :top }, border: Axlsx::STYLE_THIN_BORDER)
+empty_style = wb.styles.add_style
+row_styles = [location_style, data_style, product_style] + [data_style]*21
+location_width = 38
+product_width = 15
+data_width = 5.5
+
+days_of_week = Date::DAYS_INTO_WEEK.keys.map{|d| d.to_s.humanize }.zip([nil]).zip([nil]).flatten
+days_of_week_full = Date::DAYS_INTO_WEEK.keys.map.with_index{|d, i| "#{d.to_s.humanize} #{(@web_portal_route.week_end_date - 6 + i).strftime('%m/%d')}"}
+  .zip([nil]).zip([nil]).flatten
+
+wb.add_worksheet(name: "Weekly") do |sheet|
+  # this is the head row of your spreadsheet
+  sheet.add_row(["Draw Management for the Week of #{@web_portal_route.week_end_date.monday.strftime('%m/%d/%Y')} to #{(@web_portal_route.week_end_date).strftime('%m/%d/%Y')}"], style: title)
+  sheet.add_row(["Market: #{format_id_to_s(@web_portal_route.market_id)} " +
+    "District: #{format_id_to_s(@web_portal_route.district_id)} " +
+    "Route: #{format_id_to_s(@web_portal_route.route_id)} " +
+    "Description: #{@web_portal_route.route_description}"], style: subtitle)
+  sheet.add_row
+
+  sheet.add_row(["Location", "ID", "Product/Type"] + days_of_week_full, style: day_header)
+  3.step(21, 3) do |number|
+    sheet.merge_cells(sheet.rows.last.cells[(number..number+2)])
+  end
+
+  sheet.add_row([nil]*3 + %w(Draw Delv Ret)*7, style: header)
+  sheet.merge_cells("A4:A5")
+  sheet.merge_cells("B4:B5")
+  sheet.merge_cells("C4:C5")
+
+  location_id = nil
+  @locations.ordered_by_sequence.each do |location|
+    location.draws_and_returns.join_product.ordered_by_prod_seq.each do |record|
+      location_name = location_id == location.id ? "" : "#{location.id.to_s.strip} - #{location.location_name.strip}" + "\n" +
+        "#{location.address_line.strip}" + "\n" + "#{format_to_phone_number(location.location_phone)}"
+      location_id = location.id
+      sheet.add_row([location_name,
+        format_id_to_s(record.product_order_id),
+        "#{record.product_id.strip} - #{record.product_short_name.strip}" + "\n" + record.product_order_type_id.strip,
+        eval_to_space(record.monday_net_draw), nil, eval_to_space(record.monday_returns),
+        eval_to_space(record.tuesday_net_draw), nil, eval_to_space(record.tuesday_returns),
+        eval_to_space(record.wednesday_net_draw), nil, eval_to_space(record.wednesday_returns),
+        eval_to_space(record.thursday_net_draw), nil, eval_to_space(record.thursday_returns),
+        eval_to_space(record.friday_net_draw), nil, eval_to_space(record.friday_returns),
+        eval_to_space(record.saturday_net_draw), nil, eval_to_space(record.saturday_returns),
+        eval_to_space(record.sunday_net_draw), nil, eval_to_space(record.sunday_returns)],
+        style: row_styles)
+    end
+  end
+  sheet.add_row
+
+  # Add totals
+  sheet.add_row(["Draw and Returns Totals"] + [nil]*2 + days_of_week, style: [subtitle] + [empty_style]*2 + [header]*21)
+  3.step(21, 3) do |number|
+    sheet.merge_cells(sheet.rows.last.cells[(number..number + 2)])
+  end
+  sheet.add_row([nil, nil, "Prod"] + %w(Draw Delv Ret)*7, style: [empty_style]*2 + [header]*22)
+
+  @web_portal_route.draws_and_returns.product_totals.each do |record|
+    sheet.add_row([nil, nil, record.prodid.strip,
+      record.monday_net_draw, nil, record.monday_returns,
+      record.tuesday_net_draw, nil, record.tuesday_returns,
+      record.wednesday_net_draw, nil, record.wednesday_returns,
+      record.thursday_net_draw, nil, record.thursday_returns,
+      record.friday_net_draw, nil, record.friday_returns,
+      record.saturday_net_draw, nil, record.saturday_returns,
+      record.sunday_net_draw, nil, record.sunday_returns],
+      style: [empty_style]*2 + [data_style]*22)
+  end
+
+  # Add Grand totals
+  @web_portal_route.draws_and_returns.sum_totals.each do |record|
+    sheet.add_row([nil, nil, "Total",
+      record.monday_net_draw, nil, record.monday_returns,
+      record.tuesday_net_draw, nil, record.tuesday_returns,
+      record.wednesday_net_draw, nil, record.wednesday_returns,
+      record.thursday_net_draw, nil, record.thursday_returns,
+      record.friday_net_draw, nil, record.friday_returns,
+      record.saturday_net_draw, nil, record.saturday_returns,
+      record.sunday_net_draw, nil, record.sunday_returns],
+      style: [empty_style]*2 + [footer]*22)
+  end
+
+  sheet.column_widths(*([location_width, data_width, product_width] + [data_width]*21))
+end
+

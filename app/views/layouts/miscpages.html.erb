@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CommerceAppChampionDrawManagement</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+  <body>
+    <%= render "layouts/header" %>
+
+    <div class="main-content">
+      <%= render "shared/flash_messages" %>
+      <%= yield %>
+      <div class="text-center" style="margin-bottom:1em;">
+          <%= link_to "Back", :back, class: "btn btn-default"  %>
+       </div>
+    </div>
+
+    <%= render "layouts/footer" %>
+  </body>
+</html>

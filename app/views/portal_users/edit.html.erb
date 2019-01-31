@@ -1,0 +1,29 @@
+<div class="content">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-1">
+      <h2 class="content_header">Profile Information</h2>
+      <hr>
+      <form>
+        <div class="form-group">
+          <label for="staticUserName">User name</label>
+          <p class="form-control-static" id="staticUserName"> <%= @portal_user.user_name %></p>
+        </div>
+        <div class="form-group">
+          <label for="staticEmailAddress">Email address</label>
+          <p class="form-control-static" id="staticEmailAddress"> <%= @portal_user.email_address %></p>
+        </div>
+      </form>
+      <hr>
+      <a class="btn btn-default active" href="#" role="button" data-js-modal-target="#ChangeEmail" data-turbolinks="false">Change Email Address</a>
+
+      <a class="btn btn-default active" href="#" role="button" data-js-modal-target="#ChangePassword" data-turbolinks="false" >Change Password</a>
+    </div>
+  </div>
+</div> <!-- END div for profile container -->
+
+<!-- Modals for changing password and changing email address -->
+<%= render "shared/change_password_modal" %>
+<%= render "shared/change_email_modal" %>
+<!-- END Modals for changing password and changing email address -->
+
+

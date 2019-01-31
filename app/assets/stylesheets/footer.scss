@@ -1,0 +1,20 @@
+/* app/assets/footer.scss */
+
+.footer {
+  padding: 1em 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  color: black;
+  text-align: center;
+  background-color: white;
+  border-top: 2px solid #0098ff;
+  margin-top: 0px;
+  flex-shrink: 0;
+
+  .copy {
+    color: rgba(39, 30, 34, 0.6);
+  }
+}
+
